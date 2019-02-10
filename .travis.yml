@@ -3,12 +3,13 @@ python:
   - '3.6'
 
 install:
+  echo "installing"
 
 script:
+  echo "passing build"
 
 addons:
   ssh_known_hosts: $SERVER_ADDR
-
 
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_69cad52147cb_key -iv $encrypted_69cad52147cb_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
