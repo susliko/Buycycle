@@ -1,6 +1,3 @@
-addons:
-  ssh_known_hosts: $SERVER_ADDR
-
 language: python
 python:
   - '3.6'
@@ -12,6 +9,7 @@ script:
   echo "passing build"
 
 before_deploy:
+  - ssh-keyscan -t $TRAVIS_SSH_KEY_TYPES -H $SERVER_ADDR 2>&1 | tee -a $HOME/.ssh/known_hosts
   - openssl aes-256-cbc -K $encrypted_69cad52147cb_key -iv $encrypted_69cad52147cb_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
   - eval "$(ssh-agent -s)"
   - chmod 600 /tmp/deploy_rsa
