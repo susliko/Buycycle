@@ -45,7 +45,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'Buycycle.urls'
+ROOT_URLCONF = 'buycycle.urls'
 
 TEMPLATES = [
     {
