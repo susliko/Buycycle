@@ -14,7 +14,7 @@ class HomePageView(View):
             </head>
             <body>
                 <h1>Greetings to the world</h1>
-                <p>Hello, Sasha!</p>
+                <p>Hello, Masha!</p>
             </body>
             </html>
         ''')
