@@ -4,7 +4,7 @@ from flask import jsonify
 import jsonschema
 from jsonschema import validate
 from schemas import *
-from client import *
+from db.client import *
 
 app = Flask(__name__)
 
