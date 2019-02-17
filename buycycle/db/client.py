@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from urllib.parse import quote_plus
+from urllib import quote_plus
 from persons import PersonsClient
 from deals import DealsClient
 from transfers import TransfersClient
