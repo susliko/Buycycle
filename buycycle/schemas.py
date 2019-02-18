@@ -18,7 +18,7 @@ account_schema = {
 person_schema = {
     "type": "object",
     "properties": {
-        "account_id": {"type": "string"},
+        "accountId": {"type": "string"},
         "name": {"type": "string"},
         "debtors": {"type": "array",
                     "items": {
@@ -37,13 +37,13 @@ person_schema = {
                         },
                         "required": ["name", "amount"]}}
     },
-    "required": ["account_id", "name"]
+    "required": ["accountId", "name"]
 }
 
 deal_schema = {
     "type": "object",
     "properties": {
-        "account_id": {"type": "string"},
+        "accountId": {"type": "string"},
         "name": {"type": "string"},
         "lender": {"type": "string"},
         "members": {"type": "array",
@@ -51,18 +51,18 @@ deal_schema = {
                         "type": "string"}},
         "type": {"enum": ["oneForAll"]}
     },
-    "required": ["account_id", "name", "lender", "members", "type"]
+    "required": ["accountId", "name", "lender", "members", "type"]
 }
 
 transfer_schema = {
     "type": "object",
     "properties": {
-        ""
+        "accountId": {"type": "string"},
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
         "currency": {"type": "string"}
     },
-    "required": ["sender", "receiver", "amount", "currency"]
+    "required": ["accountId", "sender", "receiver", "amount", "currency"]
 }
 
