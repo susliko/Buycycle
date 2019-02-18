@@ -8,27 +8,27 @@ from buycycle.db.client import *
 app = Flask(__name__)
 schema = JsonSchema(app)
 
-error_msg = "why are you trying to kill my service? :("
 
-
-def error_resp(msg):
+@app.errorhandler(400)
+def common_error(e):
     return jsonify({"status": "error",
-                    "message": msg})
+                    "message": "why are you trying to kill my service? :("}), 400
 
 
-def cond_error_resp(cond, msg):
-    if cond:
-        error_resp(msg)
+app.register_error_handler(400, common_error)
 
 
 @app.errorhandler(JsonValidationError)
 def validation_error(e):
-    return jsonify({'error': e.message, 'errors': [err.message for err in e.errors]})
+    return jsonify({'error': e.message, 'errors': [err.message for err in e.errors]}), 400
 
 
 @app.route("/")
 def hello():
     return "<h1 style='color:blue'>I want to ride my buycycle, I want to ride my bike!</h1>"
+
+
+# persons CRUD
 
 
 @app.route('/api/addPerson', methods=['POST'])
@@ -38,13 +38,25 @@ def add_person():
     return jsonify(persons_client.add(body))
 
 
+@app.route('/api/updatePerson', methods=['POST'])
+@schema.validate(person_schema)
+def update_person():
+    per_id = request.args.get("personId")
+    if per_id is None:
+        return '', 400
+    body = request.get_json()
+    return jsonify(persons_client.update_by_id(per_id, body))
+
+
 @app.route('/api/getPersons', methods=['GET'])
 def get_persons():
     acc_id = request.args.get("accountId")
-    cond_error_resp(acc_id is None, error_msg)
     res = persons_client.get_by_acc_id(acc_id)
     print(res)
     return jsonify(res)
+
+
+# accounts CRUD
 
 
 @app.route("/api/addAccount", methods=['POST'])
@@ -54,11 +66,21 @@ def add_account():
     return jsonify(accounts_client.add(body))
 
 
+@app.route('/api/updateAccount', methods=['POST'])
+@schema.validate(account_schema)
+def update_account():
+    acc_id = request.args.get("personId")
+    body = request.get_json()
+    return jsonify(persons_client.update_by_id(acc_id, body))
+
+
 @app.route('/api/getAccount', methods=['GET'])
 def get_account():
     acc_id = request.args.get("accountId")
-    cond_error_resp(acc_id is None, error_msg)
     return jsonify(accounts_client.get_by_acc_id(acc_id))
+
+
+# transfers CRUD
 
 
 @app.route("/api/addTransfer", methods=['POST'])
@@ -68,11 +90,32 @@ def add_transfer():
     return jsonify(transfers_client.add(body))
 
 
+@app.route('/api/updateTransfer', methods=['POST'])
+@schema.validate(transfer_schema)
+def update_transfer():
+    tr_id = request.args.get("transferId")
+    body = request.get_json()
+    transfers_client.update_by_id(tr_id, body)
+    return '', 204
+
+
+@app.route('/api/deleteTransfer', methods=['DELETE'])
+def delete_transfer():
+    tr_id = request.args.get("transferId")
+    persons_client.delete_by_id(tr_id)
+    return '', 204
+
+
 @app.route('/api/getTransfers', methods=['GET'])
 def get_transfers():
-    acc_id = request.args.get("accountId")
-    cond_error_resp(acc_id is None, error_msg)
-    return jsonify(transfers_client.get_by_acc_id(acc_id))
+    tr_id = request.args.get("accountId")
+    print(tr_id)
+    if tr_id is None:
+        return '', 400
+    return jsonify(transfers_client.get_by_acc_id(tr_id))
+
+
+# deals CRUD
 
 
 @app.route("/api/addDeal", methods=['POST'])
@@ -82,10 +125,25 @@ def add_deals():
     return jsonify(deals_client.add(body))
 
 
+@app.route('/api/updateDeal', methods=['POST'])
+@schema.validate(deal_schema)
+def update_deal():
+    deal_id = request.args.get("dealId")
+    body = request.get_json()
+    persons_client.update_by_id(deal_id, body)
+    return '', 204
+
+
+@app.route('/api/deleteDeal', methods=['DELETE'])
+def delete_deal():
+    deal_id = request.args.get("dealId")
+    persons_client.delete_by_id(deal_id)
+    return '', 204
+
+
 @app.route('/api/getDeals', methods=['GET'])
 def get_deals():
     acc_id = request.args.get("accountId")
-    cond_error_resp(acc_id is None, error_msg)
     return jsonify(transfers_client.get_by_acc_id(acc_id))
 
 

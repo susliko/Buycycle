@@ -19,3 +19,9 @@ class CollManager:
 
     def add(self, body):
         return {"id": str(self.client.insert_one(body).inserted_id)}
+
+    def update_by_id(self, doc_id, body):
+        self.client.update_one({"_id": ObjectId(doc_id)}, {"$set": body})
+
+    def delete_by_id(self, doc_id):
+        self.client.delete_one({"_id": ObjectId(doc_id)})

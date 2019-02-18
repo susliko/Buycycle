@@ -66,7 +66,7 @@ transfer_schema = {
         "amount": {"type": "number"},
         "currency": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount", "currency"],
+    "required": ["accountId", "sender", "receiver", "amount"],
     "additionalProperties": False
 }
 
