@@ -1,5 +1,6 @@
 from buycycle.db.base import CollManager
 
+
 class AccountsClient(CollManager):
 
     def add(self, name, persons=[], deals=[], transfers=[]):

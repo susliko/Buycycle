@@ -1,19 +1,20 @@
-addAccountReq = {
+add_account_req = {
     "type": "object",
     "properties" :{
         "name": {"type": "string"}
     }
 }
 
-addPersonReq = {
+add_person_req = {
     "type": "object",
     "properties": {
         "id": {"type": "string"},
         "name": {"type": "string"}
-    }
+    },
+    "required": ["id", "name"]
 }
 
-addDealReq = {
+add_deal_req = {
     "type": "object",
     "properties": {
         "id": {"type": "string"},
@@ -23,16 +24,18 @@ addDealReq = {
                     "items": {
                         "type": "string"}},
         "type": {"enum": ["oneForAll"]}
-    }
+    },
+    "required": ["id", "name", "lender", "members", "type"]
 }
 
-addTransferReq = {
+add_transfer_req = {
     "type": "object",
     "properties": {
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
         "currency": {"type": "string", "optional": True}
-    }
+    },
+    "required": ["sender", "receiver", "amount", "currency"]
 }
 
