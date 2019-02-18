@@ -32,29 +32,31 @@ def hello():
 
 
 @app.route('/api/addPerson', methods=['POST'])
-@schema.validate(add_person_req)
+@schema.validate(person_schema)
 def add_person():
     body = request.get_json()
-    cond_error_resp(body is None, error_msg)
     return jsonify(persons_client.add(body['name']))
 
 
 @app.route("/api/addAccount", methods=['POST'])
-@schema.validate(add_account_req)
+@schema.validate(account_schema)
 def add_account():
-    return error_msg
+    body = request.get_json()
+    return jsonify(accounts_client.add(body))
 
 
 @app.route("/api/addTransfer", methods=['POST'])
-@schema.validate(add_transfer_req)
+@schema.validate(transfer_schema)
 def add_transfer():
-    return error_msg
+    body = request.get_json()
+    return jsonify(transfers_client.add(body))
 
 
 @app.route("/api/addDeal", methods=['POST'])
-@schema.validate(add_deal_req)
+@schema.validate(deal_schema)
 def add_deal():
-    return error_msg
+    body = request.get_json()
+    return jsonify(deals_client.add(body))
 
 
 if __name__ == "__main__":

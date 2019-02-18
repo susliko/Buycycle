@@ -1,23 +1,49 @@
-add_account_req = {
-    "type": "object",
-    "properties" :{
-        "name": {"type": "string"}
-    }
-}
-
-add_person_req = {
+account_schema = {
     "type": "object",
     "properties": {
-        "id": {"type": "string"},
-        "name": {"type": "string"}
+        "name": {"type": "string"},
+        "persons": {"type": "array",
+                    "items": {
+                        "type": "string"}},
+        "deals": {"type": "array",
+                  "items": {
+                      "type": "string"}},
+        "transfers": {"type": "array",
+                      "items": {
+                          "type": "string"}}
     },
-    "required": ["id", "name"]
+    "required": ["name"]
 }
 
-add_deal_req = {
+person_schema = {
     "type": "object",
     "properties": {
-        "id": {"type": "string"},
+        "account_id": {"type": "string"},
+        "name": {"type": "string"},
+        "debtors": {"type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "amount": {"type": "string"}
+                        },
+                        "required": ["name", "amount"]}},
+        "lenders": {"type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "amount": {"type": "string"}
+                        },
+                        "required": ["name", "amount"]}}
+    },
+    "required": ["account_id", "name"]
+}
+
+deal_schema = {
+    "type": "object",
+    "properties": {
+        "account_id": {"type": "string"},
         "name": {"type": "string"},
         "lender": {"type": "string"},
         "members": {"type": "array",
@@ -25,16 +51,17 @@ add_deal_req = {
                         "type": "string"}},
         "type": {"enum": ["oneForAll"]}
     },
-    "required": ["id", "name", "lender", "members", "type"]
+    "required": ["account_id", "name", "lender", "members", "type"]
 }
 
-add_transfer_req = {
+transfer_schema = {
     "type": "object",
     "properties": {
+        ""
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
-        "currency": {"type": "string", "optional": True}
+        "currency": {"type": "string"}
     },
     "required": ["sender", "receiver", "amount", "currency"]
 }
