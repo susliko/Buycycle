@@ -1,4 +1,4 @@
-from base import CollManager
+from buycycle.db.base import CollManager
 
 
 class DealsClient(CollManager):

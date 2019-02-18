@@ -3,8 +3,8 @@ from flask import request
 from flask import jsonify
 import jsonschema
 from jsonschema import validate
-from schemas import *
-from db.client import *
+from buycycle.schemas import *
+from buycycle.db.client import *
 
 app = Flask(__name__)
 

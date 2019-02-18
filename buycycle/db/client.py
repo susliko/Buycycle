@@ -1,9 +1,9 @@
 from pymongo import MongoClient
-from urllib import quote_plus
-from persons import PersonsClient
-from deals import DealsClient
-from transfers import TransfersClient
-from accounts import AccountsClient
+from urllib.parse import quote_plus
+from buycycle.db.persons import PersonsClient
+from buycycle.db.deals import DealsClient
+from buycycle.db.transfers import TransfersClient
+from buycycle.db.accounts import AccountsClient
 
 user = "admin"  # TODO from environment
 password = "MVSdiht"  # TODO
