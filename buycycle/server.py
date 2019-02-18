@@ -38,7 +38,7 @@ def add_person():
     return jsonify(persons_client.add(body))
 
 
-@app.route('/api/getPersons')
+@app.route('/api/getPersons', methods=['GET'])
 def get_persons():
     acc_id = request.args.get("accountId")
     cond_error_resp(acc_id is None, error_msg)
@@ -54,11 +54,11 @@ def add_account():
     return jsonify(accounts_client.add(body))
 
 
-@app.route('/api/getAccount')
+@app.route('/api/getAccount', methods=['GET'])
 def get_account():
     acc_id = request.args.get("accountId")
     cond_error_resp(acc_id is None, error_msg)
-    return jsonify(accounts_client.get_by_id(acc_id))
+    return jsonify(accounts_client.get_by_acc_id(acc_id))
 
 
 @app.route("/api/addTransfer", methods=['POST'])
@@ -68,18 +68,25 @@ def add_transfer():
     return jsonify(transfers_client.add(body))
 
 
-@app.route('/api/getTransfers')
+@app.route('/api/getTransfers', methods=['GET'])
 def get_transfers():
     acc_id = request.args.get("accountId")
     cond_error_resp(acc_id is None, error_msg)
-    return jsonify(transfers_client.get_by_id(acc_id))
+    return jsonify(transfers_client.get_by_acc_id(acc_id))
 
 
 @app.route("/api/addDeal", methods=['POST'])
 @schema.validate(deal_schema)
-def add_deal():
+def add_deals():
     body = request.get_json()
     return jsonify(deals_client.add(body))
+
+
+@app.route('/api/getDeals', methods=['GET'])
+def get_deals():
+    acc_id = request.args.get("accountId")
+    cond_error_resp(acc_id is None, error_msg)
+    return jsonify(transfers_client.get_by_acc_id(acc_id))
 
 
 if __name__ == "__main__":

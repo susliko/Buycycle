@@ -13,5 +13,9 @@ class CollManager:
         object_id_to_str(entry)
         return entry
 
+    def get_by_acc_id(self, acc_id):
+        return list(map(lambda x: object_id_to_str(x),
+                        list(self.client.find({"accountId": acc_id}))))
+
     def add(self, body):
         return {"id": str(self.client.insert_one(body).inserted_id)}
