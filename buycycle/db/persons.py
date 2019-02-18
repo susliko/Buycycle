@@ -1,5 +1,6 @@
 from buycycle.db.base import CollManager
-from utils import object_id_to_str
+from buycycle.utils import object_id_to_str
+
 
 class PersonsClient(CollManager):
 
