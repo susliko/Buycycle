@@ -12,7 +12,8 @@ account_schema = {
                       "items": {
                           "type": "string"}}
     },
-    "required": ["name"]
+    "required": ["name"],
+    "additionalProperties": False
 }
 
 person_schema = {
@@ -37,7 +38,8 @@ person_schema = {
                         },
                         "required": ["name", "amount"]}}
     },
-    "required": ["accountId", "name"]
+    "required": ["accountId", "name"],
+    "additionalProperties": False
 }
 
 deal_schema = {
@@ -51,7 +53,8 @@ deal_schema = {
                         "type": "string"}},
         "type": {"enum": ["oneForAll"]}
     },
-    "required": ["accountId", "name", "lender", "members", "type"]
+    "required": ["accountId", "name", "lender", "members", "type"],
+    "additionalProperties": False
 }
 
 transfer_schema = {
@@ -63,6 +66,7 @@ transfer_schema = {
         "amount": {"type": "number"},
         "currency": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount", "currency"]
+    "required": ["accountId", "sender", "receiver", "amount", "currency"],
+    "additionalProperties": False
 }
 
