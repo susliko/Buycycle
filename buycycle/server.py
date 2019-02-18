@@ -8,7 +8,7 @@ from buycycle.db.client import *
 app = Flask(__name__)
 schema = JsonSchema(app)
 
-error_msg = "you're dick who's trying to kill my service"
+error_msg = "why are you trying to kill my service? :("
 
 
 def error_resp(msg):
