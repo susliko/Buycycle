@@ -28,14 +28,23 @@ def validation_error(e):
 
 @app.route("/")
 def hello():
-    return "<h1 style='color:blue'>Hello Masha!</h1>"
+    return "<h1 style='color:blue'>I want to ride my buycycle, I want to ride my bike!</h1>"
 
 
 @app.route('/api/addPerson', methods=['POST'])
 @schema.validate(person_schema)
 def add_person():
     body = request.get_json()
-    return jsonify(persons_client.add(body['name']))
+    return jsonify(persons_client.add(body))
+
+
+@app.route('/api/getPersons')
+def get_persons():
+    acc_id = request.args.get("accountId")
+    cond_error_resp(acc_id is None, error_msg)
+    res = persons_client.get_by_acc_id(acc_id)
+    print(res)
+    return jsonify(res)
 
 
 @app.route("/api/addAccount", methods=['POST'])
@@ -45,11 +54,25 @@ def add_account():
     return jsonify(accounts_client.add(body))
 
 
+@app.route('/api/getAccount')
+def get_account():
+    acc_id = request.args.get("accountId")
+    cond_error_resp(acc_id is None, error_msg)
+    return jsonify(accounts_client.get_by_id(acc_id))
+
+
 @app.route("/api/addTransfer", methods=['POST'])
 @schema.validate(transfer_schema)
 def add_transfer():
     body = request.get_json()
     return jsonify(transfers_client.add(body))
+
+
+@app.route('/api/getTransfers')
+def get_transfers():
+    acc_id = request.args.get("accountId")
+    cond_error_resp(acc_id is None, error_msg)
+    return jsonify(transfers_client.get_by_id(acc_id))
 
 
 @app.route("/api/addDeal", methods=['POST'])
