@@ -1,4 +1,4 @@
-from bson import ObjectId
+from bson.objectid import ObjectId
 from buycycle.utils import object_id_to_str
 
 

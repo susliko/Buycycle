@@ -52,7 +52,6 @@ def update_person():
 def get_persons():
     acc_id = request.args.get("accountId")
     res = persons_client.get_by_acc_id(acc_id)
-    print(res)
     return jsonify(res)
 
 
@@ -102,14 +101,13 @@ def update_transfer():
 @app.route('/api/deleteTransfer', methods=['DELETE'])
 def delete_transfer():
     tr_id = request.args.get("transferId")
-    persons_client.delete_by_id(tr_id)
+    transfers_client.delete_by_id(tr_id)
     return '', 204
 
 
 @app.route('/api/getTransfers', methods=['GET'])
 def get_transfers():
     tr_id = request.args.get("accountId")
-    print(tr_id)
     if tr_id is None:
         return '', 400
     return jsonify(transfers_client.get_by_acc_id(tr_id))
@@ -137,7 +135,7 @@ def update_deal():
 @app.route('/api/deleteDeal', methods=['DELETE'])
 def delete_deal():
     deal_id = request.args.get("dealId")
-    persons_client.delete_by_id(deal_id)
+    deals_client.delete_by_id(deal_id)
     return '', 204
 
 
