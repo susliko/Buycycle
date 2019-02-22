@@ -86,6 +86,7 @@ def get_account():
 @schema.validate(transfer_schema)
 def add_transfer():
     body = request.get_json()
+    debts_client.add_from_transfer(body)
     return jsonify(transfers_client.add(body))
 
 
@@ -94,6 +95,7 @@ def add_transfer():
 def update_transfer():
     tr_id = request.args.get("transferId")
     body = request.get_json()
+    debts_client.update_from_transfer(tr_id, body)
     transfers_client.update_by_id(tr_id, body)
     return '', 204
 
@@ -120,6 +122,7 @@ def get_transfers():
 @schema.validate(deal_schema)
 def add_deals():
     body = request.get_json()
+    debts_client.add_from_deal(body);
     return jsonify(deals_client.add(body))
 
 

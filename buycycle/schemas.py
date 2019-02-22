@@ -51,9 +51,10 @@ deal_schema = {
         "members": {"type": "array",
                     "items": {
                         "type": "string"}},
+        "amount": {"type": "number"},
         "type": {"enum": ["oneForAll"]}
     },
-    "required": ["accountId", "name", "lender", "members", "type"],
+    "required": ["accountId", "name", "lender", "members", "amount", "type"],
     "additionalProperties": False
 }
 
@@ -70,3 +71,14 @@ transfer_schema = {
     "additionalProperties": False
 }
 
+debt_schema = {
+    "type": "object",
+    "properties": {
+        "accountId": {"type": "string"},
+        "sender": {"type": "string"},
+        "receiver": {"type": "string"},
+        "amount": {"type": "number"}
+    },
+    "required": ["accountId", "sender", "receiver", "amount"],
+    "additionalProperties": False
+}
