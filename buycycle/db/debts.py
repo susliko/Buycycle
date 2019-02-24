@@ -17,30 +17,42 @@ class DebtsClient(CollManager):
             for member in members:
                 if member == body["lender"]:
                     continue
-                new_transfer = {"sender": body["lender"],
+                new_transfer = {"accountId": body["accountId"],
+                                "sender": body["lender"],
                                 "receiver": member,
                                 "amount": body["amount"]/len(members)}
-                print(new_transfer)
                 self.add_from_transfer(new_transfer)
 
-
-    def update_from_transfer(self, transfer_id, body):
+    def delete_from_transfer(self, transfer_id):
         transfer = client.transfers_client.get_by_id(transfer_id)
-        new_transfer = body
-
-        if body["sender"] == transfer["sender"]:
-            if body["amount"] >= transfer["amount"]:
-                new_transfer["amount"] = body["amount"] - transfer["amount"]
-            else:
-                new_transfer["sender"] = body["receiver"]
-                new_transfer["receiver"] = body["sender"]
-                new_transfer["amount"] = transfer["amount"] - body["amount"]
-        else:
-            new_transfer["sender"] = body["receiver"]
-            new_transfer["receiver"] = body["sender"]
-            new_transfer["amount"] = transfer["amount"] + body["amount"]
+        new_transfer = {"accountId": transfer["accountId"],
+                        "sender": transfer["receiver"],
+                        "receiver": transfer["sender"],
+                        "amount": transfer["amount"]}
 
         self.add_from_transfer(new_transfer)
+
+    def delete_from_deal(self, deal_id):
+        deal = client.deals_client.get_by_id(deal_id)
+
+        if deal["type"] == "oneForAll":
+            members = deal["members"]
+            for member in members:
+                if member == deal["lender"]:
+                    continue
+                new_transfer = {"accountId": deal["accountId"],
+                                "sender": member,
+                                "receiver": deal["lender"],
+                                "amount": deal["amount"]/len(members)}
+                self.add_from_transfer(new_transfer)
+
+    def update_from_deal(self, deal_id, body):
+        self.delete_from_deal(deal_id)
+        self.add_from_deal(body)
+
+    def update_from_transfer(self, transfer_id, body):
+        self.delete_from_transfer(transfer_id)
+        self.add_from_transfer(body)
 
     def find_debt(self, body):
         return self.client.find_one({"accountId": body["accountId"],

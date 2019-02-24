@@ -103,6 +103,7 @@ def update_transfer():
 @app.route('/api/deleteTransfer', methods=['DELETE'])
 def delete_transfer():
     tr_id = request.args.get("transferId")
+    debts_client.delete_from_transfer(tr_id)
     transfers_client.delete_by_id(tr_id)
     return '', 204
 
@@ -122,7 +123,7 @@ def get_transfers():
 @schema.validate(deal_schema)
 def add_deals():
     body = request.get_json()
-    debts_client.add_from_deal(body);
+    debts_client.add_from_deal(body)
     return jsonify(deals_client.add(body))
 
 
@@ -131,6 +132,7 @@ def add_deals():
 def update_deal():
     deal_id = request.args.get("dealId")
     body = request.get_json()
+    debts_client.update_from_deal(deal_id, body)
     persons_client.update_by_id(deal_id, body)
     return '', 204
 
@@ -138,6 +140,7 @@ def update_deal():
 @app.route('/api/deleteDeal', methods=['DELETE'])
 def delete_deal():
     deal_id = request.args.get("dealId")
+    debts_client.delete_from_deal(deal_id)
     deals_client.delete_by_id(deal_id)
     return '', 204
 
@@ -146,6 +149,12 @@ def delete_deal():
 def get_deals():
     acc_id = request.args.get("accountId")
     return jsonify(transfers_client.get_by_acc_id(acc_id))
+
+
+@app.route('/api/getDebts', methods=['GET'])
+def get_debts():
+    acc_id = request.args.get("accountId")
+    return jsonify(debts_client.get_by_acc_id(acc_id))
 
 
 if __name__ == "__main__":
