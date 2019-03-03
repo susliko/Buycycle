@@ -1,5 +1,6 @@
 from buycycle.db.base import CollManager
 from buycycle.db import client
+import operator
 
 
 class DebtsClient(CollManager):
@@ -77,3 +78,49 @@ class DebtsClient(CollManager):
                 debt["amount"] = transfer["amount"] - debt["amount"]
 
                 self.client.update_one({"_id": debt["_id"]}, {"$set": debt})
+
+    def get_lenders_and_debtors(self, account_id):
+        debts = self.client.find({"accountId": account_id})
+        lenders_debtors = {}
+        for debt in debts:
+            sender = debt["sender"]
+            receiver = debt["receiver"]
+            amount = debt["amount"]
+
+            if sender in lenders_debtors.keys():
+                lenders_debtors[sender] += amount
+            else:
+                lenders_debtors[sender] = amount
+
+            if receiver in lenders_debtors.keys():
+                lenders_debtors[receiver] -= amount
+            else:
+                lenders_debtors[receiver] = -amount
+
+        return lenders_debtors
+
+    def get_optimized_debts(self, account_id):
+        lenders_debtors = self.get_lenders_and_debtors(account_id)
+        sorted_lenders = sorted(lenders_debtors.items(), key=operator.itemgetter(1))
+        sorted_lenders = [list(x) for x in sorted_lenders]
+        result = []
+        while len(sorted_lenders) > 0:
+            if abs(sorted_lenders[0][1]) < abs(sorted_lenders[-1][1]):
+                result.append({"sender": sorted_lenders[-1][0],
+                               "receiver": sorted_lenders[0][0],
+                               "amount": abs(sorted_lenders[0][1])})
+                sorted_lenders[-1][1] += sorted_lenders[0][1]
+                sorted_lenders.pop(0)
+            else:
+                result.append({"sender": sorted_lenders[-1][0],
+                               "receiver": sorted_lenders[0][0],
+                               "amount": abs(sorted_lenders[-1][1])})
+                if abs(sorted_lenders[0][1]) == abs(sorted_lenders[-1][1]):
+                    sorted_lenders.pop(0)
+                    sorted_lenders.pop(len(sorted_lenders) - 1)
+                else:
+                    sorted_lenders[0][1] += sorted_lenders[-1][1]
+                    sorted_lenders.pop(len(sorted_lenders) - 1)
+        return result
+
+

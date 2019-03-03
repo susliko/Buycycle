@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import Flask
 from flask import request
 from flask import jsonify
@@ -52,7 +53,28 @@ def update_person():
 def get_persons():
     acc_id = request.args.get("accountId")
     res = persons_client.get_by_acc_id(acc_id)
+    persons_debts_enrichment(res, acc_id)
     return jsonify(res)
+
+
+def persons_debts_enrichment(persons_list, account_id):
+    optimized_debts = debts_client.get_optimized_debts(account_id)
+    for debt in optimized_debts:
+        debtor_name = persons_client.get_by_id(debt["receiver"])["name"]
+        lender_name = persons_client.get_by_id(debt["sender"])["name"]
+
+        for person in persons_list:
+            if "debtors" not in person.keys():
+                person["debtors"] = []
+            if "lenders" not in person.keys():
+                person["lenders"] = []
+
+            if person["id"] == debt["sender"]:
+                person["debtors"].append({"name": debtor_name,
+                                          "amount": debt["amount"]})
+            if person["id"] == debt["receiver"]:
+                person["lenders"].append({"name": lender_name,
+                                          "amount": debt["amount"]})
 
 
 # accounts CRUD
