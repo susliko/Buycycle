@@ -25,7 +25,7 @@ def validation_error(e):
 
 
 @app.after_request
-def apply_caching(response):
+def attach_cors_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
