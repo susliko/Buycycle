@@ -24,6 +24,12 @@ def validation_error(e):
     return jsonify({'error': e.message, 'errors': [err.message for err in e.errors]}), 400
 
 
+@app.after_request
+def apply_caching(response):
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
 @app.route("/")
 def hello():
     return "<h1 style='color:blue'>I want to ride my buycycle, I want to ride my bike!</h1>"
