@@ -26,6 +26,8 @@ def validation_error(e):
 
 @app.after_request
 def attach_cors_header(response):
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT'
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
