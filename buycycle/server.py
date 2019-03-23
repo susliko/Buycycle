@@ -107,7 +107,7 @@ def update_account():
 @app.route('/api/getAccount', methods=['GET'])
 def get_account():
     acc_id = request.args.get("accountId")
-    return jsonify(accounts_client.get_by_acc_id(acc_id))
+    return jsonify(accounts_client.get_by_id(acc_id))
 
 
 # transfers CRUD
