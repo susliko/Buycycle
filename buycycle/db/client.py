@@ -4,6 +4,7 @@ from buycycle.db.persons import PersonsClient
 from buycycle.db.deals import DealsClient
 from buycycle.db.transfers import TransfersClient
 from buycycle.db.accounts import AccountsClient
+from buycycle.db.debts import DebtsClient
 
 user = "admin"  # TODO from environment
 password = "MVSdiht"  # TODO
@@ -17,3 +18,4 @@ persons_client = PersonsClient(db.persons)
 deals_client = DealsClient(db.deals)
 transfers_client = TransfersClient(db.transfers)
 accounts_client = AccountsClient(db.accounts)
+debts_client = DebtsClient(db.debts)
