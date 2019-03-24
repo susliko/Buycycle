@@ -13,7 +13,7 @@ class DebtsClient(CollManager):
             self.change_record(body, debt)
 
     def add_from_deal(self, body):
-        if body["type"] == "oneForAll":
+        if body["type"] == "OneForAll":
             members = body["members"]
             for member in members:
                 if member == body["lender"]:
@@ -36,7 +36,7 @@ class DebtsClient(CollManager):
     def delete_from_deal(self, deal_id):
         deal = client.deals_client.get_by_id(deal_id)
 
-        if deal["type"] == "oneForAll":
+        if deal["type"] == "OneForAll":
             members = deal["members"]
             for member in members:
                 if member == deal["lender"]:
