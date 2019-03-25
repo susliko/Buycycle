@@ -69,8 +69,6 @@ def get_persons():
 def persons_debts_enrichment(persons_list, account_id):
     optimized_debts = debts_client.get_optimized_debts(account_id)
     for debt in optimized_debts:
-        debtor_name = persons_client.get_by_id(debt["receiver"])["name"]
-        lender_name = persons_client.get_by_id(debt["sender"])["name"]
 
         for person in persons_list:
             if "debtors" not in person.keys():
@@ -79,10 +77,10 @@ def persons_debts_enrichment(persons_list, account_id):
                 person["lenders"] = []
 
             if person["id"] == debt["sender"]:
-                person["debtors"].append({"name": debtor_name,
+                person["debtors"].append({"name": debt["receiver"],
                                           "amount": debt["amount"]})
             if person["id"] == debt["receiver"]:
-                person["lenders"].append({"name": lender_name,
+                person["lenders"].append({"name": debt["sender"],
                                           "amount": debt["amount"]})
 
 
