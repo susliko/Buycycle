@@ -32,7 +32,7 @@ def validation_error(e):
 def attach_cors_headers(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT,DELETE'
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
