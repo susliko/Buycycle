@@ -181,7 +181,7 @@ def delete_deal():
 @app.route('/api/getDeals', methods=['GET'])
 def get_deals():
     acc_id = request.args.get("accountId")
-    return jsonify(transfers_client.get_by_acc_id(acc_id))
+    return jsonify(deals_client.get_by_acc_id(acc_id))
 
 
 @app.route('/api/getDebts', methods=['GET'])
