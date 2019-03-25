@@ -9,20 +9,24 @@ from buycycle.db.client import *
 app = Flask(__name__)
 schema = JsonSchema(app)
 
+@app.errorhandler(500)
+def internal_error(e):
+    return jsonify({"status": "internal_error",
+                    "message": str(e)}), 400
 
 @app.errorhandler(400)
-def common_error(e):
-    return jsonify({"status": "error",
+def bad_request(e):
+    return jsonify({"status": "bad_request",
                     "message": "why are you trying to kill my service? :("}), 400
 
 
-app.register_error_handler(400, common_error)
+app.register_error_handler(400, bad_request)
+app.register_error_handler(500, internal_error)
 
 
 @app.errorhandler(JsonValidationError)
 def validation_error(e):
     return jsonify({'error': e.message, 'errors': [err.message for err in e.errors]}), 400
-
 
 @app.after_request
 def attach_cors_headers(response):

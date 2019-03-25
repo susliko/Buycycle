@@ -52,7 +52,7 @@ deal_schema = {
                     "items": {
                         "type": "string"}},
         "amount": {"type": "number"},
-        "type": {"enum": ["oneForAll"]}
+        "type": {"enum": ["OneForAll"]}
     },
     "required": ["accountId", "name", "lender", "members", "amount", "type"],
     "additionalProperties": False
