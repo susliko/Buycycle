@@ -3,6 +3,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask_json_schema import JsonSchema, JsonValidationError
+import logging
+from logging.handlers import RotatingFileHandler
 from buycycle.schemas import *
 from buycycle.db.client import *
 
@@ -27,6 +29,7 @@ app.register_error_handler(500, internal_error)
 @app.errorhandler(JsonValidationError)
 def validation_error(e):
     return jsonify({'error': e.message, 'errors': [err.message for err in e.errors]}), 400
+
 
 @app.after_request
 def attach_cors_headers(response):
@@ -191,5 +194,18 @@ def get_debts():
 
 
 if __name__ == "__main__":
+    formatter = logging.Formatter(
+        "[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
+    log_handler = RotatingFileHandler('logs/buycycle.log', maxBytes=100000, backupCount=1)
+    log_handler.setLevel(logging.DEBUG)
+    log_handler.setFormatter(formatter)
+
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.DEBUG)
+
+    app.logger.addHandler(log_handler)
+    log.addHandler(logging.StreamHandler())
+    log.addHandler(log_handler)
+
     app.run(host='0.0.0.0', port=8000)
 
