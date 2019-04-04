@@ -169,7 +169,7 @@ def update_deal():
     deal_id = request.args.get("dealId")
     body = request.get_json()
     debts_client.update_from_deal(deal_id, body)
-    persons_client.update_by_id(deal_id, body)
+    deals_client.update_by_id(deal_id, body)
     return '', 204
 
 
