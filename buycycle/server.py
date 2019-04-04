@@ -69,8 +69,7 @@ def update_person():
 def get_persons():
     acc_id = request.args.get("accountId")
     res = persons_client.get_by_acc_id(acc_id)
-    persons_debts_enrichment(res, acc_id)
-    return jsonify(res)
+    return jsonify(persons_debts_enrichment(res, acc_id))
 
 
 def persons_debts_enrichment(persons_list, account_id):
@@ -89,6 +88,7 @@ def persons_debts_enrichment(persons_list, account_id):
             if person["id"] == debt["receiver"]:
                 person["lenders"].append({"name": debt["sender"],
                                           "amount": debt["amount"]})
+    return persons_list
 
 
 # accounts CRUD
