@@ -1,0 +1,4 @@
+flask
+flask_json_schema
+bson
+pymongo
