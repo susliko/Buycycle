@@ -18,6 +18,7 @@ schema = JsonSchema(app)
 
 ok_resp = {'status': 'ok'}
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return auth_client.get_user(user_id)
