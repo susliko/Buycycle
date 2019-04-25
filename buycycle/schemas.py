@@ -1,3 +1,13 @@
+auth_schema = {
+    "type": "object",
+    "properties": {
+        "login": {"type": "string"},
+        "password": {"type": "string"}
+    },
+    "required": ["login", "password"],
+    "additionalProperties": False
+}
+
 account_schema = {
     "type": "object",
     "properties": {
@@ -10,9 +20,10 @@ account_schema = {
                       "type": "string"}},
         "transfers": {"type": "array",
                       "items": {
-                          "type": "string"}}
+                          "type": "string"}},
+        "owner": {"type": "string"}
     },
-    "required": ["name"],
+    "required": ["name", "owner"],
     "additionalProperties": False
 }
 
@@ -36,9 +47,10 @@ person_schema = {
                             "name": {"type": "string"},
                             "amount": {"type": "string"}
                         },
-                        "required": ["name", "amount"]}}
+                        "required": ["name", "amount"]}},
+        "owner": {"type": "string"}
     },
-    "required": ["accountId", "name"],
+    "required": ["accountId", "name", "owner"],
     "additionalProperties": False
 }
 
@@ -52,9 +64,10 @@ deal_schema = {
                     "items": {
                         "type": "string"}},
         "amount": {"type": "number"},
-        "type": {"enum": ["OneForAll"]}
+        "type": {"enum": ["OneForAll"]},
+        "owner": {"type": "string"}
     },
-    "required": ["accountId", "name", "lender", "members", "amount", "type"],
+    "required": ["accountId", "name", "lender", "members", "amount", "type", "owner"],
     "additionalProperties": False
 }
 
@@ -65,9 +78,10 @@ transfer_schema = {
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
-        "currency": {"type": "string"}
+        "currency": {"type": "string"},
+        "owner": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount"],
+    "required": ["accountId", "sender", "receiver", "amount", "owner"],
     "additionalProperties": False
 }
 
@@ -77,8 +91,10 @@ debt_schema = {
         "accountId": {"type": "string"},
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
-        "amount": {"type": "number"}
+        "amount": {"type": "number"},
+        "owner": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount"],
+    "required": ["accountId", "sender", "receiver", "amount", "owner"],
     "additionalProperties": False
 }
+
