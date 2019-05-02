@@ -1,24 +1,22 @@
-from flask_login import UserMixin
-
 
 class User:
-    def __init__(self, login, password, authentificated):
+    def __init__(self, login, password, authenticated):
         self.login = login
         self.password = password
-        self.authentificated = authentificated
+        self.authenticated = authenticated
 
     def to_json(self):
         return {
             'login': self.login,
             'password': self.password,
-            'authentificated': self.authentificated
+            'authenticated': self.authenticated
         }
 
     def is_active(self):
         return True
 
     def is_authenticated(self):
-        return self.authentificated
+        return self.authenticated
 
     def is_anonymous(self):
         return False
@@ -28,7 +26,7 @@ class User:
 
 
 def user_from_json(json):
-    return User(json['login'], json['password'], json['authentificated'])
+    return User(json['login'], json['password'], json['authenticated'])
 
 
 class AuthClient:
@@ -44,14 +42,14 @@ class AuthClient:
 
     def register(self, body):
         user = self.get_user(body['login'])
-        body['authentificated'] = True
+        body['authenticated'] = True
         allowed_to_reg = user is None
         if allowed_to_reg:
             self.client.insert_one(body)
         return allowed_to_reg
 
     def login(self, login):
-        self.client.update_one({'login': login}, {"$set": {'authentificated': True}})
+        self.client.update_one({'login': login}, {"$set": {'authenticated': True}})
 
     def logout(self, login):
-        self.client.update_one({'login': login}, {"$set": {'authentificated': False}})
+        self.client.update_one({'login': login}, {"$set": {'authenticated': False}})

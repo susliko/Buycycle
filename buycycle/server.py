@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import session
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
 from logging.handlers import RotatingFileHandler
@@ -56,13 +56,6 @@ def login():
 def logout():
     auth_client.logout(session.get('user_id'))
     logout_user()
-    return jsonify(ok_resp)
-
-
-@app.route('/api/foo', methods=['GET'])
-@login_required
-def foo():
-    print(session.get('user_id'))
     return jsonify(ok_resp)
 
 
@@ -168,6 +161,11 @@ def persons_debts_enrichment(persons_list, account_id):
 
 
 # accounts CRUD
+
+@app.route("/api/getAccounts", methods=['GET'])
+@login_required
+def get_accounts():
+    return jsonify(accounts_client.get_accs_by_user(session.get('user_id')))
 
 
 @app.route("/api/addAccount", methods=['POST'])

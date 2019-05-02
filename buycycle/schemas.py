@@ -23,7 +23,7 @@ account_schema = {
                           "type": "string"}},
         "owner": {"type": "string"}
     },
-    "required": ["name", "owner"],
+    "required": ["name"],
     "additionalProperties": False
 }
 
