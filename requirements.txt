@@ -3,4 +3,3 @@ flask_json_schema
 bson
 pymongo
 flask-login
-flask-cors
