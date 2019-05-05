@@ -26,11 +26,14 @@ def load_user(user_id):
     return auth_client.get_user(user_id)
 
 
-def check_login(body):
-    print(body)
-    print(session.get('user_id'))
-    if body['owner'] != session.get('user_id'):
+def check_login(account):
+    if account['owner'] != session.get('user_id'):
         raise AccessDeniedError
+
+
+def check_login_by_acc_id(acc_id):
+    account = accounts_client.get_by_id(acc_id)
+    check_login(account)
 
 
 @app.route('/api/register', methods=['POST'])
@@ -119,7 +122,7 @@ def hello():
 @schema.validate(person_schema)
 def add_person():
     body = request.get_json()
-    check_login(persons_client.get_by_acc_id(body['account_id']))
+    check_login_by_acc_id(body['account_id'])
     body['login'] = session.get('user_id')
     return jsonify(persons_client.add(body))
 
@@ -130,7 +133,7 @@ def add_person():
 def update_person():
     per_id = request.args.get("personId")
     body = request.get_json()
-    check_login(persons_client.get_by_acc_id(body['account_id']))
+    check_login_by_acc_id(body['account_id'])
     return jsonify(persons_client.update_by_id(per_id, body))
 
 
@@ -138,7 +141,7 @@ def update_person():
 @login_required
 def get_persons():
     acc_id = request.args.get("accountId")
-    check_login(persons_client.get_by_acc_id(acc_id))
+    check_login_by_acc_id(acc_id)
     res = persons_client.get_by_acc_id(acc_id)
     return jsonify(persons_debts_enrichment(res, acc_id))
 
@@ -185,7 +188,7 @@ def add_account():
 def update_account():
     acc_id = request.args.get("accountId")
     body = request.get_json()
-    check_login(accounts_client.get_by_acc_id(acc_id))
+    check_login_by_acc_id(acc_id)
     return jsonify(accounts_client.update_by_id(acc_id, body))
 
 
@@ -194,7 +197,7 @@ def update_account():
 def get_account():
     acc_id = request.args.get("accountId")
     account = accounts_client.get_by_id(acc_id)
-    check_login(account)
+    check_login(acc_id)
     return jsonify(account)
 
 
@@ -206,6 +209,7 @@ def get_account():
 @schema.validate(transfer_schema)
 def add_transfer():
     body = request.get_json()
+    check_login_by_acc_id(body['accountId'])
     body['owner'] = session.get('user_id')
     debts_client.add_from_transfer(body)
     return jsonify(transfers_client.add(body))
@@ -217,7 +221,7 @@ def add_transfer():
 def update_transfer():
     tr_id = request.args.get("transferId")
     body = request.get_json()
-    check_login(transfers_client.get_by_acc_id(body['account_id']))
+    check_login_by_acc_id(body['account_id'])
     debts_client.update_from_transfer(tr_id, body)
     transfers_client.update_by_id(tr_id, body)
     return jsonify(ok_resp)
@@ -236,9 +240,9 @@ def delete_transfer():
 @app.route('/api/getTransfers', methods=['GET'])
 @login_required
 def get_transfers():
-    tr_id = request.args.get("accountId")
-    check_login(transfers_client.get_by_id(tr_id))
-    return jsonify(transfers_client.get_by_acc_id(tr_id))
+    acc_id = request.args.get("accountId")
+    check_login_by_acc_id(acc_id)
+    return jsonify(transfers_client.get_by_acc_id(acc_id))
 
 
 # deals CRUD
@@ -249,6 +253,8 @@ def get_transfers():
 @schema.validate(deal_schema)
 def add_deals():
     body = request.get_json()
+    acc_id = body['accountId']
+    check_login_by_acc_id(acc_id)
     body['owner'] = session.get('user_id')
     debts_client.add_from_deal(body)
     return jsonify(deals_client.add(body))
@@ -260,7 +266,7 @@ def add_deals():
 def update_deal():
     deal_id = request.args.get("dealId")
     body = request.get_json()
-    check_login(deals_client.get_by_id(deal_id))
+    check_login_by_acc_id(body['accountId'])
     debts_client.update_from_deal(deal_id, body)
     deals_client.update_by_id(deal_id, body)
     return jsonify(ok_resp)
@@ -280,7 +286,7 @@ def delete_deal():
 @login_required
 def get_deals():
     acc_id = request.args.get("accountId")
-    check_login(deals_client.get_by_acc_id(acc_id))
+    check_login_by_acc_id(acc_id)
     return jsonify(deals_client.get_by_acc_id(acc_id))
 
 
@@ -288,7 +294,7 @@ def get_deals():
 @login_required
 def get_debts():
     acc_id = request.args.get("accountId")
-    check_login(deals_client.get_by_acc_id(acc_id))
+    check_login_by_acc_id(acc_id)
     return jsonify(debts_client.get_by_acc_id(acc_id))
 
 
