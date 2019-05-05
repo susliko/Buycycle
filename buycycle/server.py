@@ -134,7 +134,7 @@ def hello():
 @schema.validate(person_schema)
 def add_person():
     body = request.get_json()
-    check_login_by_acc_id(body['account_id'])
+    check_login_by_acc_id(body['accountId'])
     body['login'] = session.get('user_id')
     return jsonify(persons_client.add(body))
 
@@ -145,7 +145,7 @@ def add_person():
 def update_person():
     per_id = request.args.get("personId")
     body = request.get_json()
-    check_login_by_acc_id(body['account_id'])
+    check_login_by_acc_id(body['accountId'])
     return jsonify(persons_client.update_by_id(per_id, body))
 
 
@@ -222,7 +222,6 @@ def get_account():
 def add_transfer():
     body = request.get_json()
     check_login_by_acc_id(body['accountId'])
-    body['owner'] = session.get('user_id')
     debts_client.add_from_transfer(body)
     return jsonify(transfers_client.add(body))
 
@@ -233,7 +232,7 @@ def add_transfer():
 def update_transfer():
     tr_id = request.args.get("transferId")
     body = request.get_json()
-    check_login_by_acc_id(body['account_id'])
+    check_login_by_acc_id(body['accountId'])
     debts_client.update_from_transfer(tr_id, body)
     transfers_client.update_by_id(tr_id, body)
     return jsonify(ok_resp)
@@ -267,7 +266,6 @@ def add_deals():
     body = request.get_json()
     acc_id = body['accountId']
     check_login_by_acc_id(acc_id)
-    body['owner'] = session.get('user_id')
     debts_client.add_from_deal(body)
     return jsonify(deals_client.add(body))
 

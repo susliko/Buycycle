@@ -48,9 +48,8 @@ person_schema = {
                             "amount": {"type": "string"}
                         },
                         "required": ["name", "amount"]}},
-        "owner": {"type": "string"}
     },
-    "required": ["accountId", "name", "owner"],
+    "required": ["accountId", "name"],
     "additionalProperties": False
 }
 
@@ -65,9 +64,8 @@ deal_schema = {
                         "type": "string"}},
         "amount": {"type": "number"},
         "type": {"enum": ["OneForAll"]},
-        "owner": {"type": "string"}
     },
-    "required": ["accountId", "name", "lender", "members", "amount", "type", "owner"],
+    "required": ["accountId", "name", "lender", "members", "amount", "type"],
     "additionalProperties": False
 }
 
@@ -79,9 +77,8 @@ transfer_schema = {
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
         "currency": {"type": "string"},
-        "owner": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount", "owner"],
+    "required": ["accountId", "sender", "receiver", "amount"],
     "additionalProperties": False
 }
 
@@ -92,9 +89,8 @@ debt_schema = {
         "sender": {"type": "string"},
         "receiver": {"type": "string"},
         "amount": {"type": "number"},
-        "owner": {"type": "string"}
     },
-    "required": ["accountId", "sender", "receiver", "amount", "owner"],
+    "required": ["accountId", "sender", "receiver", "amount"],
     "additionalProperties": False
 }
 
