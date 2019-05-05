@@ -74,7 +74,7 @@ def bad_request(e):
 @app.errorhandler(401)
 def unauthorized(e):
     return jsonify({"status": "unauthorized",
-                    "message": "login to perform this action"})
+                    "message": "login to perform this action"}), 401
 
 
 app.register_error_handler(400, bad_request)
