@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 from flask import session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
 from logging.handlers import RotatingFileHandler
@@ -12,6 +13,7 @@ from buycycle.errors import *
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
+CORS(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 schema = JsonSchema(app)
