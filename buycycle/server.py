@@ -70,8 +70,14 @@ def bad_request(e):
     return jsonify({"status": "bad_request",
                     "message": "why are you trying to kill my service? :("}), 400
 
+@app.errorhandler(401)
+def unauthorized(e):
+    return jsonify({"status": "unauthorized",
+                    "message": "login to perform this action"})
+
 
 app.register_error_handler(400, bad_request)
+app.register_error_handler(401, unauthorized)
 app.register_error_handler(500, internal_error)
 
 
