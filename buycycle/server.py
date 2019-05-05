@@ -61,7 +61,7 @@ def login():
         raise LoginFailedError
 
 
-@app.route('/api/logout', methods=['GET'])
+@app.route('/api/logout', methods=['POST'])
 def logout():
     auth_client.logout(session.get('user_id'))
     logout_user()
