@@ -27,6 +27,8 @@ def load_user(user_id):
 
 
 def check_login(body):
+    print(body)
+    print(session.get('user_id'))
     if body['owner'] != session.get('user_id'):
         raise AccessDeniedError
 
@@ -191,8 +193,9 @@ def update_account():
 @login_required
 def get_account():
     acc_id = request.args.get("accountId")
-    check_login(accounts_client.get_by_acc_id(acc_id))
-    return jsonify(accounts_client.get_by_id(acc_id))
+    account = accounts_client.get_by_id(acc_id)
+    check_login(account)
+    return jsonify(account)
 
 
 # transfers CRUD
