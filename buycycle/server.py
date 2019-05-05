@@ -41,6 +41,8 @@ def check_login_by_acc_id(acc_id):
 def register():
     body = request.get_json()
     if auth_client.register(body):
+        user = load_user(body['login'])
+        login_user(user)
         return jsonify(ok_resp)
     else:
         raise AlreadyRegisteredError
@@ -134,6 +136,7 @@ def hello():
 @schema.validate(person_schema)
 def add_person():
     body = request.get_json()
+    body['owner'] = session.get('user_id')
     check_login_by_acc_id(body['accountId'])
     body['login'] = session.get('user_id')
     return jsonify(persons_client.add(body))
@@ -221,6 +224,7 @@ def get_account():
 @schema.validate(transfer_schema)
 def add_transfer():
     body = request.get_json()
+    body['owner'] = session.get('user_id')
     check_login_by_acc_id(body['accountId'])
     debts_client.add_from_transfer(body)
     return jsonify(transfers_client.add(body))
@@ -262,8 +266,9 @@ def get_transfers():
 @app.route("/api/addDeal", methods=['POST'])
 @login_required
 @schema.validate(deal_schema)
-def add_deals():
+def add_deal():
     body = request.get_json()
+    body['owner'] = session.get('user_id')
     acc_id = body['accountId']
     check_login_by_acc_id(acc_id)
     debts_client.add_from_deal(body)
