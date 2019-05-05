@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 from flask import session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
 from logging.handlers import RotatingFileHandler
@@ -14,6 +15,7 @@ app = Flask(__name__)
 app.secret_key = 'super secret key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+CORS(app)
 schema = JsonSchema(app)
 
 ok_resp = {'status': 'ok'}
@@ -101,13 +103,13 @@ def login_error(e):
     return jsonify({'status': e.status, 'message': e.message})
 
 
-@app.after_request
-def attach_cors_headers(response):
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT,DELETE'
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+# @app.after_request
+# def attach_cors_headers(response):
+#     response.headers['Access-Control-Allow-Credentials'] = 'true'
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+#     response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT,DELETE'
+#     response.headers['Access-Control-Allow-Origin'] = '*'
+#     return response
 
 
 @app.route("/")
