@@ -84,6 +84,18 @@ def unauthorized(e):
                     "message": "login to perform this action"}), 401
 
 
+@app.after_request
+def attach_cors_headers(response):
+    origin = request.headers.get('Origin')
+    if origin is None:
+        origin = '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT,DELETE'
+    response.headers['Access-Control-Allow-Origin'] = origin
+    return response
+
+
 app.register_error_handler(400, bad_request)
 app.register_error_handler(401, unauthorized)
 app.register_error_handler(500, internal_error)
@@ -197,7 +209,7 @@ def update_account():
 def get_account():
     acc_id = request.args.get("accountId")
     account = accounts_client.get_by_id(acc_id)
-    check_login(acc_id)
+    check_login(account)
     return jsonify(account)
 
 
