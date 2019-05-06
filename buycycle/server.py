@@ -2,7 +2,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import session
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
 from logging.handlers import RotatingFileHandler
@@ -12,7 +13,7 @@ from buycycle.errors import *
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
-# CORS(app)
+CORS(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 schema = JsonSchema(app)
@@ -83,6 +84,18 @@ def bad_request(e):
 def unauthorized(e):
     return jsonify({"status": "unauthorized",
                     "message": "login to perform this action"}), 401
+
+
+@app.after_request
+def attach_cors_headers(response):
+    origin = request.headers.get('Origin')
+    if origin is None:
+        origin = '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,HEAD,OPTIONS,POST,PUT,DELETE'
+    response.headers['Access-Control-Allow-Origin'] = origin
+    return response
 
 
 app.register_error_handler(400, bad_request)
