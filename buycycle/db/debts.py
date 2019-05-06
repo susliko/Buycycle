@@ -5,6 +5,8 @@ import operator
 
 class DebtsClient(CollManager):
 
+    precision = 10
+
     def add_from_transfer(self, body):
         debt = self.find_debt(body)
         if debt is None:
@@ -64,18 +66,18 @@ class DebtsClient(CollManager):
 
     def change_record(self, transfer, debt):
         if transfer["sender"] == debt["sender"]:
-            debt["amount"] = debt["amount"] + transfer["amount"]
+            debt["amount"] = round(debt["amount"] + transfer["amount"], DebtsClient.precision)
             self.client.update_one({"_id": debt["_id"]}, {"$set": debt})
         else:
-            if debt["amount"] > transfer["amount"]:
-                debt["amount"] = debt["amount"] - transfer["amount"]
+            if round(debt["amount"], DebtsClient.precision) > round(transfer["amount"], DebtsClient.precision):
+                debt["amount"] = round(debt["amount"] - transfer["amount"], DebtsClient.precision)
                 self.client.update_one({"_id": debt["_id"]}, {"$set": debt})
-            elif debt["amount"] == transfer["amount"]:
+            elif round(debt["amount"], DebtsClient.precision) == round(transfer["amount"], DebtsClient.precision):
                 self.client.delete_one({"_id": debt["_id"]})
             else:
                 debt["sender"] = transfer["sender"]
                 debt["receiver"] = transfer["receiver"]
-                debt["amount"] = transfer["amount"] - debt["amount"]
+                debt["amount"] = round(transfer["amount"] - debt["amount"], DebtsClient.precision)
 
                 self.client.update_one({"_id": debt["_id"]}, {"$set": debt})
 
@@ -105,7 +107,7 @@ class DebtsClient(CollManager):
         sorted_lenders = [list(x) for x in sorted_lenders]
         result = []
         while len(sorted_lenders) > 0:
-            if abs(sorted_lenders[0][1]) < abs(sorted_lenders[-1][1]):
+            if round(abs(sorted_lenders[0][1]), DebtsClient.precision) < round(abs(sorted_lenders[-1][1]), DebtsClient.precision):
                 result.append({"sender": sorted_lenders[-1][0],
                                "receiver": sorted_lenders[0][0],
                                "amount": abs(sorted_lenders[0][1])})
@@ -115,7 +117,7 @@ class DebtsClient(CollManager):
                 result.append({"sender": sorted_lenders[-1][0],
                                "receiver": sorted_lenders[0][0],
                                "amount": abs(sorted_lenders[-1][1])})
-                if abs(sorted_lenders[0][1]) == abs(sorted_lenders[-1][1]):
+                if round(abs(sorted_lenders[0][1]), DebtsClient.precision) == round(abs(sorted_lenders[-1][1]), DebtsClient.precision):
                     sorted_lenders.pop(0)
                     sorted_lenders.pop(len(sorted_lenders) - 1)
                 else:
