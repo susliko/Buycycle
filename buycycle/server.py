@@ -314,19 +314,18 @@ def get_debts():
 
 
 if __name__ == "__main__":
-    # formatter = logging.Formatter(
-    #     "[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
-    # log_handler = RotatingFileHandler('logs/buycycle.log', maxBytes=100000, backupCount=1)
-    # log_handler.setLevel(logging.DEBUG)
-    # log_handler.setFormatter(formatter)
-    #
-    # log = logging.getLogger('werkzeug')
-    # log.setLevel(logging.DEBUG)
-    #
-    # app.logger.addHandler(log_handler)
-    # log.addHandler(logging.StreamHandler())
-    # log.addHandler(log_handler)
-    logging.basicConfig(filename='logs/buycycle.log', level=logging.DEBUG)
+    formatter = logging.Formatter(
+        "[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
+    log_handler = RotatingFileHandler('logs/buycycle.log', maxBytes=100000, backupCount=1)
+    log_handler.setLevel(logging.DEBUG)
+    log_handler.setFormatter(formatter)
+
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.DEBUG)
+
+    app.logger.addHandler(log_handler)
+    log.addHandler(logging.StreamHandler())
+    log.addHandler(log_handler)
 
     app.run(host='0.0.0.0', port=8000)
 
