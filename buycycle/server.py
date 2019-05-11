@@ -139,7 +139,7 @@ def registration_error(e):
 
 @app.errorhandler(LoginFailedError)
 def login_error(e):
-    return jsonify({'status': e.status, 'message': e.message})
+    return jsonify({'status': e.status, 'message': e.message}), 401
 
 
 @app.route("/")
