@@ -30,7 +30,6 @@ def check_access(account, is_update_req):
     owner = account['owner']
     user = session.get('user_id')
     acc_mode = account['mode']
-    print(is_update_req and acc_mode == 'publicRestricted')
     if (acc_mode == 'private' or (is_update_req and acc_mode == 'publicRestricted')) and owner != user:
         raise AccessDeniedError
 
@@ -206,6 +205,7 @@ def get_accounts():
 
 @app.route("/api/addAccount", methods=['POST'])
 @schema.validate(account_schema)
+@login_required
 def add_account():
     body = request.get_json()
     body['owner'] = session.get('user_id')
