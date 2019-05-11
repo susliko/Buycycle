@@ -99,7 +99,7 @@ def bad_request(e):
 
 
 @app.errorhandler(401)
-def unauthorized():
+def unauthorized(e):
     return jsonify({"status": "unauthorized",
                     "message": "login to perform this action"}), 401
 
