@@ -199,6 +199,7 @@ def persons_debts_enrichment(persons_list, account_id):
 # accounts CRUD
 
 @app.route("/api/getAccounts", methods=['GET'])
+@login_required
 def get_accounts():
     return jsonify(accounts_client.get_accs_by_user(session.get('user_id')))
 
