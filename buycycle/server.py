@@ -74,6 +74,17 @@ def logout():
     return jsonify(ok_resp)
 
 
+@app.route('/api/whoAmI', methods=['GET'])
+def who_am_i():
+    user = session.get('user_id')
+    if user is not None:
+        return jsonify({'isRegistered': True,
+                        'userId': session['user_id']})
+    else:
+        return jsonify({'isRegistered': False,
+                        'userId': 'you are nobody here!'})
+
+
 # error handlers
 
 @app.errorhandler(500)
@@ -92,15 +103,6 @@ def bad_request(e):
 def unauthorized():
     return jsonify({"status": "unauthorized",
                     "message": "login to perform this action"}), 401
-
-
-@app.route('/api/whoAmI', methods=['GET'])
-def who_am_i():
-    user = session.get('user_id')
-    if user is not None:
-        return jsonify({'userId': session['user_id']})
-    else:
-        return unauthorized()
 
 
 @app.after_request
