@@ -23,7 +23,8 @@ account_schema = {
         "transfers": {"type": "array",
                       "items": {
                           "type": "string"}},
-        "owner": {"type": "string"}
+        "owner": {"type": "string"},
+        "createdAt": {"type": "string"}
     },
     "required": ["name", "mode"],
     "additionalProperties": False

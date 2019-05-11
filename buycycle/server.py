@@ -6,6 +6,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_cors import CORS
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
+import datetime
 from logging.handlers import RotatingFileHandler
 from buycycle.schemas import *
 from buycycle.db.client import *
@@ -208,6 +209,7 @@ def get_accounts():
 @login_required
 def add_account():
     body = request.get_json()
+    body['createdAt'] = str(datetime.datetime.now())
     body['owner'] = session.get('user_id')
     return jsonify(accounts_client.add(body))
 
