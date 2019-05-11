@@ -12,6 +12,8 @@ account_schema = {
     "type": "object",
     "properties": {
         "name": {"type": "string"},
+        "mode": {"type": "string",
+                 "enum": ["private", "publicRestricted", "public"]},
         "persons": {"type": "array",
                     "items": {
                         "type": "string"}},
@@ -23,7 +25,7 @@ account_schema = {
                           "type": "string"}},
         "owner": {"type": "string"}
     },
-    "required": ["name"],
+    "required": ["name", "mode"],
     "additionalProperties": False
 }
 

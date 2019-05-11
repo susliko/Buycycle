@@ -26,15 +26,21 @@ def load_user(user_id):
     return auth_client.get_user(user_id)
 
 
-def check_login(account):
-    if account['owner'] != session.get('user_id'):
+def check_access(account, is_update_req):
+    owner = account['owner']
+    user = session.get('user_id')
+    acc_mode = account['mode']
+    print(is_update_req and acc_mode == 'publicRestricted')
+    if (acc_mode == 'private' or (is_update_req and acc_mode == 'publicRestricted')) and owner != user:
         raise AccessDeniedError
 
 
-def check_login_by_acc_id(acc_id):
+def check_access_by_acc_id(acc_id, is_update_req):
     account = accounts_client.get_by_id(acc_id)
-    check_login(account)
+    check_access(account, is_update_req)
 
+
+# auth routes
 
 @app.route('/api/register', methods=['POST'])
 @schema.validate(auth_schema)
@@ -68,6 +74,8 @@ def logout():
     return jsonify(ok_resp)
 
 
+# error handlers
+
 @app.errorhandler(500)
 def internal_error(e):
     return jsonify({"status": "internal_error",
@@ -81,9 +89,18 @@ def bad_request(e):
 
 
 @app.errorhandler(401)
-def unauthorized(e):
+def unauthorized():
     return jsonify({"status": "unauthorized",
                     "message": "login to perform this action"}), 401
+
+
+@app.route('/api/whoAmI', methods=['GET'])
+def who_am_i():
+    user = session.get('user_id')
+    if user is not None:
+        return jsonify({'userId': session['user_id']})
+    else:
+        return unauthorized()
 
 
 @app.after_request
@@ -132,31 +149,28 @@ def hello():
 
 
 @app.route('/api/addPerson', methods=['POST'])
-@login_required
 @schema.validate(person_schema)
 def add_person():
     body = request.get_json()
     body['owner'] = session.get('user_id')
-    check_login_by_acc_id(body['accountId'])
+    check_access_by_acc_id(body['accountId'], True)
     body['login'] = session.get('user_id')
     return jsonify(persons_client.add(body))
 
 
 @app.route('/api/updatePerson', methods=['POST'])
-@login_required
 @schema.validate(person_schema)
 def update_person():
     per_id = request.args.get("personId")
     body = request.get_json()
-    check_login_by_acc_id(body['accountId'])
+    check_access_by_acc_id(body['accountId'], True)
     return jsonify(persons_client.update_by_id(per_id, body))
 
 
 @app.route('/api/getPersons', methods=['GET'])
-@login_required
 def get_persons():
     acc_id = request.args.get("accountId")
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, False)
     res = persons_client.get_by_acc_id(acc_id)
     return jsonify(persons_debts_enrichment(res, acc_id))
 
@@ -183,13 +197,11 @@ def persons_debts_enrichment(persons_list, account_id):
 # accounts CRUD
 
 @app.route("/api/getAccounts", methods=['GET'])
-@login_required
 def get_accounts():
     return jsonify(accounts_client.get_accs_by_user(session.get('user_id')))
 
 
 @app.route("/api/addAccount", methods=['POST'])
-@login_required
 @schema.validate(account_schema)
 def add_account():
     body = request.get_json()
@@ -198,21 +210,19 @@ def add_account():
 
 
 @app.route('/api/updateAccount', methods=['POST'])
-@login_required
 @schema.validate(account_schema)
 def update_account():
     acc_id = request.args.get("accountId")
     body = request.get_json()
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, True)
     return jsonify(accounts_client.update_by_id(acc_id, body))
 
 
 @app.route('/api/getAccount', methods=['GET'])
-@login_required
 def get_account():
     acc_id = request.args.get("accountId")
     account = accounts_client.get_by_id(acc_id)
-    check_login(account)
+    check_access(account, False)
     return jsonify(account)
 
 
@@ -220,43 +230,40 @@ def get_account():
 
 
 @app.route("/api/addTransfer", methods=['POST'])
-@login_required
 @schema.validate(transfer_schema)
 def add_transfer():
     body = request.get_json()
     body['owner'] = session.get('user_id')
-    check_login_by_acc_id(body['accountId'])
+    check_access_by_acc_id(body['accountId'], True)
     debts_client.add_from_transfer(body)
     return jsonify(transfers_client.add(body))
 
 
 @app.route('/api/updateTransfer', methods=['POST'])
-@login_required
 @schema.validate(transfer_schema)
 def update_transfer():
     tr_id = request.args.get("transferId")
     body = request.get_json()
-    check_login_by_acc_id(body['accountId'])
+    check_access_by_acc_id(body['accountId'], True)
     debts_client.update_from_transfer(tr_id, body)
     transfers_client.update_by_id(tr_id, body)
     return jsonify(ok_resp)
 
 
 @app.route('/api/deleteTransfer', methods=['DELETE'])
-@login_required
 def delete_transfer():
     tr_id = request.args.get("transferId")
-    check_login(transfers_client.get_by_id(tr_id))
+    transfer = transfers_client.get_by_id(tr_id)
+    check_access_by_acc_id(transfer['accountId'], True)
     debts_client.delete_from_transfer(tr_id)
     transfers_client.delete_by_id(tr_id)
     return jsonify(ok_resp)
 
 
 @app.route('/api/getTransfers', methods=['GET'])
-@login_required
 def get_transfers():
     acc_id = request.args.get("accountId")
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, False)
     return jsonify(transfers_client.get_by_acc_id(acc_id))
 
 
@@ -264,52 +271,48 @@ def get_transfers():
 
 
 @app.route("/api/addDeal", methods=['POST'])
-@login_required
 @schema.validate(deal_schema)
 def add_deal():
     body = request.get_json()
     body['owner'] = session.get('user_id')
     acc_id = body['accountId']
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, True)
     debts_client.add_from_deal(body)
     return jsonify(deals_client.add(body))
 
 
 @app.route('/api/updateDeal', methods=['POST'])
-@login_required
 @schema.validate(deal_schema)
 def update_deal():
     deal_id = request.args.get("dealId")
     body = request.get_json()
-    check_login_by_acc_id(body['accountId'])
+    check_access_by_acc_id(body['accountId'], True)
     debts_client.update_from_deal(deal_id, body)
     deals_client.update_by_id(deal_id, body)
     return jsonify(ok_resp)
 
 
 @app.route('/api/deleteDeal', methods=['DELETE'])
-@login_required
 def delete_deal():
     deal_id = request.args.get("dealId")
-    check_login(deals_client.get_by_id(deal_id))
+    deal = deals_client.get_by_id(deal_id)
+    check_access_by_acc_id(deal['accountId'], True)
     debts_client.delete_from_deal(deal_id)
     deals_client.delete_by_id(deal_id)
     return jsonify(ok_resp)
 
 
 @app.route('/api/getDeals', methods=['GET'])
-@login_required
 def get_deals():
     acc_id = request.args.get("accountId")
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, False)
     return jsonify(deals_client.get_by_acc_id(acc_id))
 
 
 @app.route('/api/getDebts', methods=['GET'])
-@login_required
 def get_debts():
     acc_id = request.args.get("accountId")
-    check_login_by_acc_id(acc_id)
+    check_access_by_acc_id(acc_id, False)
     return jsonify(debts_client.get_by_acc_id(acc_id))
 
 
