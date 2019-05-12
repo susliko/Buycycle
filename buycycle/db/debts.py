@@ -99,6 +99,14 @@ class DebtsClient(CollManager):
             else:
                 lenders_debtors[receiver] = -amount
 
+        keys = set()
+        for key in lenders_debtors.keys():
+            if round(lenders_debtors.get(key), DebtsClient.precision) == 0:
+                keys.add(key)
+
+        for key in keys:
+            lenders_debtors.pop(key)
+
         return lenders_debtors
 
     def get_optimized_debts(self, account_id):
