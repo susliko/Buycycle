@@ -78,11 +78,13 @@ def logout():
 def who_am_i():
     user = session.get('user_id')
     if user is not None:
-        return jsonify({'isRegistered': True,
+        response = jsonify({'isRegistered': True,
                         'userId': session['user_id']})
     else:
-        return jsonify({'isRegistered': False,
+        response = jsonify({'isRegistered': False,
                         'userId': 'you are nobody here!'})
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 # error handlers
