@@ -83,7 +83,7 @@ def who_am_i():
     else:
         response = jsonify({'isRegistered': False,
                         'userId': 'you are nobody here!'})
-    response.headers['Cache-Control'] = 'no-store'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
 
 
