@@ -4,6 +4,7 @@ from flask import jsonify
 from flask import session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
 from flask_json_schema import JsonSchema, JsonValidationError
 import logging
 import datetime
@@ -15,6 +16,7 @@ from buycycle.errors import *
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 CORS(app)
+bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 schema = JsonSchema(app)
@@ -46,6 +48,7 @@ def check_access_by_acc_id(acc_id, is_update_req):
 @schema.validate(auth_schema)
 def register():
     body = request.get_json()
+    body['password'] = bcrypt.generate_password_hash(body['password'])
     if auth_client.register(body):
         user = load_user(body['login'])
         login_user(user)
@@ -59,7 +62,7 @@ def register():
 def login():
     body = request.get_json()
     user = auth_client.get_user(body['login'])
-    if user is not None and user.password == body['password']:
+    if user is not None and bcrypt.check_password_hash(user.password, body['password']):
         login_user(user)
         auth_client.login(body['login'])
         return jsonify(ok_resp)

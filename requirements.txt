@@ -4,3 +4,4 @@ bson
 pymongo
 flask-login
 flask-cors
+flask-bcrypt
